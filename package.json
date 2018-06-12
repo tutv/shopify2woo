@@ -8,5 +8,13 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "confidence": "^3.0.2",
+    "dotenv": "^6.0.0",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5",
+    "shopify-api-node": "^2.14.0",
+    "woocommerce-api": "^1.4.2"
+  }
 }
