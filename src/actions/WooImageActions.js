@@ -29,7 +29,7 @@ exports.addImagesToProduct = (productId, images) => {
                     const {images} = product;
 
                     if (totalImages > 1 && images.length <= 1) {
-                        return _delay(totalImages * 1000)
+                        return _delay(totalImages * 3000)
                             .then(() => {
                                 return WooServices.get(`products/${productId}`);
                             });
