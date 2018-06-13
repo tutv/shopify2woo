@@ -9,11 +9,11 @@ const _handleResponse = (raw) => {
     const response = raw.toJSON();
     const {body, statusCode} = response;
 
-    if (parseInt(statusCode, 10) >= 300) {
+    if (parseInt(statusCode, 10) >= 500) {
         console.error('CODE', statusCode);
         console.error(body);
 
-        throw new Error('RESPONSE FAILED');
+        throw new Error('SERVER_ERROR');
     }
 
     try {
