@@ -10,8 +10,8 @@ const _handleResponse = (raw) => {
     const {body, statusCode} = response;
 
     if (parseInt(statusCode, 10) >= 300) {
-        //console.error('CODE', statusCode);
-        //console.error(body);
+        console.error('CODE', statusCode);
+        console.error(body);
 
         throw new Error('RESPONSE FAILED');
     }
