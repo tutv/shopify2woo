@@ -1,6 +1,8 @@
 const ShopifyActions = require('../actions/ShopifyActions');
 const WooActions = require('../actions/WooActions');
+const WooTagActions = require('../actions/WooTagActions');
 const Promise = require('bluebird');
+const ms = require('ms');
 
 const PER_PAGE = 10;
 
@@ -39,7 +41,7 @@ const _import = (product) => {
 
     const {title, handle, body_html, id, options, variants, tags, images} = Object.assign({}, defaultProduct, product);
 
-    console.log('START_IMPORT_POST:', id);
+    console.log('START_IMPORT_PRODUCT:'.green, id);
 
     const productImages = images.map((image, index) => {
         return {
@@ -90,11 +92,24 @@ const _import = (product) => {
         };
     });
 
+    const startTime = Date.now();
+
     return WooActions.createProduct(args)
         .then(product => {
             const productId = product.id;
 
-            return WooActions.createVariants(productId, productVariants);
+            return WooTagActions.addTagsToProduct(productId, tags)
+                .then(() => {
+                    return WooActions.createVariants(productId, productVariants);
+                });
+        })
+        .then(result => {
+            const stopTime = Date.now();
+            const totalTime = stopTime - startTime;
+            console.log('TIME:'.yellow, ms(totalTime));
+            console.log('----------------------------------\n'.green);
+
+            return Promise.resolve(result);
         });
 };
 
@@ -106,6 +121,11 @@ ShopifyActions.getTotalProduct()
 
         _migration(total)(1)
             .then(done => {
-                console.log('DONE', Date.now() - startTime);
+                console.log('DONE', ms(Date.now() - startTime));
             });
     });
+
+// WooTagActions.addTagsToProduct(1381, 'hello, good boy',)
+//     .then(tags => {
+//         console.log(tags);
+//     });
