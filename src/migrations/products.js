@@ -2,7 +2,7 @@ const ShopifyActions = require('../actions/ShopifyActions');
 const WooActions = require('../actions/WooActions');
 const Promise = require('bluebird');
 
-const PER_PAGE = 1;
+const PER_PAGE = 10;
 
 const _migration = totalPage => (page = 1) => {
     console.log('Page: ', page);
@@ -38,6 +38,8 @@ const _import = (product) => {
     };
 
     const {title, handle, body_html, id, options, variants, tags, images} = Object.assign({}, defaultProduct, product);
+
+    console.log('START_IMPORT_POST:', id);
 
     const productImages = images.map((image, index) => {
         return {
@@ -100,5 +102,10 @@ ShopifyActions.getTotalProduct()
     .then(total => {
         console.log('Total products:', total);
 
-        _migration(total)(1);
+        const startTime = Date.now();
+
+        _migration(total)(1)
+            .then(done => {
+                console.log('DONE', Date.now() - startTime);
+            });
     });
