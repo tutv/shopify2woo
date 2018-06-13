@@ -1,6 +1,15 @@
 const WooServices = require('../services/WooServices');
 const Promise = require('bluebird');
 
+exports.getProduct = (productId) => {
+    return WooServices.get(`products/${productId}`)
+        .then(product => {
+            // console.log(product);
+
+            return Promise.resolve(product);
+        });
+};
+
 exports.createProduct = (product) => {
     const {name} = product;
     console.log("TITLE:".yellow, `${name}`);

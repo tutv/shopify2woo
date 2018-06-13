@@ -1,6 +1,8 @@
 const ShopifyActions = require('../actions/ShopifyActions');
 const WooActions = require('../actions/WooActions');
 const WooTagActions = require('../actions/WooTagActions');
+const WooImageActions = require('../actions/WooImageActions');
+const WooVariationActions = require('../actions/WooVariationActions');
 const Promise = require('bluebird');
 const ms = require('ms');
 
@@ -16,7 +18,7 @@ const _migration = totalPage => (page = 1) => {
                 return _import(product);
             }, {concurrency: 1});
         })
-        .then(imports => {
+        .then(() => {
             if (page < pages) {
                 return _migration(totalPage)(page + 1);
             }
@@ -46,7 +48,8 @@ const _import = (product) => {
     const productImages = images.map((image, index) => {
         return {
             position: index,
-            src: image.src
+            src: image.src,
+            alt: ''
         };
     });
 
@@ -66,31 +69,9 @@ const _import = (product) => {
         name: title || '',
         type: 'variable',
         short_description: body_html,
-        images: productImages,
         slug: handle,
-        attributes,
+        attributes
     };
-
-    const productVariants = variants.map(variant => {
-        const {sku, price, option1, option2, option3, compare_at_price} = variant;
-
-        return {
-            regular_price: price,
-            sale_price: compare_at_price ? compare_at_price : '',
-            sku,
-            attributes: [
-                {
-                    option: option1,
-                },
-                {
-                    option: option2,
-                },
-                {
-                    option: option3,
-                }
-            ]
-        };
-    });
 
     const startTime = Date.now();
 
@@ -100,7 +81,44 @@ const _import = (product) => {
 
             return WooTagActions.addTagsToProduct(productId, tags)
                 .then(() => {
-                    return WooActions.createVariants(productId, productVariants);
+                    return WooImageActions.addImagesToProduct(productId, productImages);
+                })
+                .then((product) => {
+                    const imagesProduct = product.images || [];
+
+                    const productVariants = variants.map(variant => {
+                        const {sku, price, option1, option2, option3, compare_at_price, image_id} = variant;
+                        const img = images.find(image => image.id === image_id);
+                        const imagePosition = img ? img['position'] : false;
+
+                        return {
+                            image: {
+                                id: (imagePosition !== false && imagesProduct[imagePosition - 1]) ? imagesProduct[imagePosition - 1].id : null
+                            },
+                            regular_price: price,
+                            sale_price: compare_at_price ? compare_at_price : '',
+                            sku,
+                            attributes: [
+                                {
+                                    id: 0,
+                                    name: options[0].name,
+                                    option: option1,
+                                },
+                                {
+                                    id: 0,
+                                    name: options[1].name,
+                                    option: option2,
+                                },
+                                {
+                                    id: 0,
+                                    name: options[2].name,
+                                    option: option3,
+                                }
+                            ]
+                        };
+                    });
+
+                    return WooVariationActions.addVariationsToProduct(productId, productVariants);
                 });
         })
         .then(result => {
@@ -125,7 +143,33 @@ ShopifyActions.getTotalProduct()
             });
     });
 
-// WooTagActions.addTagsToProduct(1381, 'hello, good boy',)
-//     .then(tags => {
-//         console.log(tags);
+// WooActions.getProduct(2566)
+//     .then(product => {
+//         console.log(product);
+//
+//         // console.log(attributes);
 //     });
+// return;
+// WooVariationActions.addVariationsToProduct(2566, {
+//     regular_price: '9.00',
+//     image: {
+//         id: 2570
+//     },
+//     attributes: [
+//         {
+//             id: 0,
+//             name: 'Model',
+//             option: 'Hanes Tagless Tee'
+//         },
+//         {
+//             id: 0,
+//             name: 'Color',
+//             option: 'Black'
+//         },
+//         {
+//             id: 0,
+//             name: 'Size',
+//             option: '2XL'
+//         }
+//     ]
+// });

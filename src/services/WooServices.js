@@ -7,14 +7,23 @@ const WooCommerce = new WooCommerceAPI(config);
 
 const _handleResponse = (raw) => {
     const response = raw.toJSON();
-    const {body} = response;
+    const {body, statusCode} = response;
+
+    if (parseInt(statusCode, 10) >= 300) {
+        //console.error('CODE', statusCode);
+        //console.error(body);
+
+        throw new Error('RESPONSE FAILED');
+    }
 
     try {
         const object = JSON.parse(body);
 
         return Promise.resolve(object);
     } catch (error) {
-        throw new Error('Parse error!');
+        console.log('PARSE_ERROR', JSON.stringify(response));
+
+        throw error;
     }
 };
 
@@ -30,5 +39,10 @@ exports.post = (url, data = {}) => {
 
 exports.put = (url, data = {}) => {
     return WooCommerce.putAsync(url, data)
+        .then(_handleResponse);
+};
+
+exports.delete = (url, data = {}) => {
+    return WooCommerce.deleteAsync(url, data)
         .then(_handleResponse);
 };
