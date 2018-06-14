@@ -6,7 +6,7 @@ const WooVariationActions = require('../actions/WooVariationActions');
 const Promise = require('bluebird');
 const ms = require('ms');
 
-const PER_PAGE = 10;
+const PER_PAGE = 12;
 
 const _migration = totalPage => (page = 1) => {
     console.log('Page: ', page);
