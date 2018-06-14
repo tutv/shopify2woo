@@ -12,37 +12,36 @@ const _checkExistOrCreate = file => {
     }
 };
 
-const _getContent = () => {
-    const file = __dirname + '/../../temp.json';
-    _checkExistOrCreate(file);
+const _getContent = (file = '') => {
+    const fileValidated = file || __dirname + '/../../temp.json';
+    _checkExistOrCreate(fileValidated);
 
-    const content = fs.readFileSync(file);
+    const content = fs.readFileSync(fileValidated);
 
     try {
         return JSON.parse(content);
-
     } catch (e) {
         return {};
     }
 };
 
-const _saveContent = (content) => {
-    const file = __dirname + '/../../temp.json';
-    _checkExistOrCreate(file);
+const _saveContent = (file = '') => (content) => {
+    const fileValidated = file || __dirname + '/../../temp.json';
+    _checkExistOrCreate(fileValidated);
 
     const string = typeof content === 'string' ? content : JSON.stringify(content);
 
-    fs.writeFileSync(file, string);
+    fs.writeFileSync(fileValidated, string);
 };
 
-exports.getStartPage = () => {
-    const settings = _getContent();
+exports.getStartPage = (file = '') => {
+    const settings = _getContent(file);
 
     return settings.page ? parseInt(settings.page, 10) : 1;
 };
 
-exports.saveCurrentPage = (page) => {
-    _saveContent({
+exports.saveCurrentPage = (page, file = '') => {
+    _saveContent(file)({
         page: parseInt(page, 10)
     });
 };
