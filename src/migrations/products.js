@@ -3,13 +3,15 @@ const WooActions = require('../actions/WooActions');
 const WooTagActions = require('../actions/WooTagActions');
 const WooImageActions = require('../actions/WooImageActions');
 const WooVariationActions = require('../actions/WooVariationActions');
+const MemServices = require('../services/MemServices');
 const Promise = require('bluebird');
 const ms = require('ms');
 
-const PER_PAGE = 12;
+const PER_PAGE = MemServices.getStartPage();
 
 const _migration = totalPage => (page = 1) => {
     console.log('Page: ', page);
+    MemServices.saveCurrentPage(page);
     const pages = Math.ceil(totalPage / PER_PAGE) || 1;
 
     return ShopifyActions.getProducts(page, PER_PAGE)
