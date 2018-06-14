@@ -1,10 +1,14 @@
 const fs = require('fs');
 
 const _checkExistOrCreate = file => {
-    const exist = fs.existsSync(file);
+    try {
+        const exist = fs.existsSync(file);
 
-    if (!exist) {
-        fs.writeFile(file, "{}");
+        if (!exist) {
+            fs.writeFileSync(file, "{}");
+        }
+    } catch (e) {
+        fs.writeFileSync(file, "{}");
     }
 };
 
