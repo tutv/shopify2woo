@@ -77,7 +77,14 @@ const _import = (product) => {
 
     const startTime = Date.now();
 
-    return WooActions.createProduct(args)
+    return WooActions.checkExistBySlug(handle)
+        .then(exist => {
+            if (exist) {
+                return WooActions.getProductBySlug(handle);
+            }
+
+            return WooActions.createProduct(args)
+        })
         .then(product => {
             const productId = product.id;
 
@@ -140,6 +147,12 @@ const _import = (product) => {
             console.log('----------------------------------\n'.green);
 
             return Promise.resolve(result);
+        })
+        .catch(error => {
+            console.error('IMPORT_PRODUCT_ERROR:'.red, id);
+            console.error('ERROR'.red, error);
+
+            console.error('----------------------------------\n'.red);
         });
 };
 

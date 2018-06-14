@@ -10,6 +10,20 @@ exports.getProduct = (productId) => {
         });
 };
 
+exports.getProductBySlug = slug => {
+    const slugValidated = (slug + "").trim();
+
+    return WooServices
+        .get(`products?slug=${slugValidated}`)
+        .then(products => {
+            if (!products || !products.length) {
+                throw new Error('Product not found.');
+            }
+
+            return products[0];
+        });
+};
+
 exports.createProduct = (product) => {
     const {name} = product;
     console.log("TITLE:".yellow, `${name}`);
@@ -30,5 +44,15 @@ exports.createVariants = (productId, variants) => {
     return Promise.map(variants, _createVariant, {
         concurrency: 1
     });
+};
+
+exports.checkExistBySlug = slug => {
+    const slugValidated = (slug + "").trim();
+
+    return WooServices
+        .get(`products?slug=${slugValidated}`)
+        .then(products => {
+            return products && !!products.length;
+        });
 };
 
