@@ -7,7 +7,7 @@ const MemServices = require('../services/MemServices');
 const Promise = require('bluebird');
 const ms = require('ms');
 
-const PER_PAGE = MemServices.getStartPage();
+const PER_PAGE = 12;
 
 const _migration = totalPage => (page = 1) => {
     console.log('Page: ', page);
@@ -148,8 +148,9 @@ ShopifyActions.getTotalProduct()
         console.log('Total products:', total);
 
         const startTime = Date.now();
+        const startPage = MemServices.getStartPage();
 
-        _migration(total)(1)
+        _migration(total)(startPage)
             .then(done => {
                 console.log('DONE', ms(Date.now() - startTime));
             });
