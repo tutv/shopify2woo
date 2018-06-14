@@ -91,6 +91,32 @@ const _import = (product) => {
                         const img = images.find(image => image.id === image_id);
                         const imagePosition = img ? img['position'] : false;
 
+                        const attributes = [];
+
+                        if (options[0] && options[0].name) {
+                            attributes.push({
+                                id: 0,
+                                name: options[0].name,
+                                option: option1,
+                            });
+                        }
+
+                        if (options[1] && options[1].name) {
+                            attributes.push({
+                                id: 0,
+                                name: options[1].name,
+                                option: option2,
+                            });
+                        }
+
+                        if (options[2] && options[2].name) {
+                            attributes.push({
+                                id: 0,
+                                name: options[2].name,
+                                option: option3,
+                            });
+                        }
+
                         return {
                             image: {
                                 id: (imagePosition !== false && imagesProduct[imagePosition - 1]) ? imagesProduct[imagePosition - 1].id : null
@@ -98,23 +124,7 @@ const _import = (product) => {
                             regular_price: price,
                             sale_price: compare_at_price ? compare_at_price : '',
                             sku,
-                            attributes: [
-                                {
-                                    id: 0,
-                                    name: options[0].name,
-                                    option: option1,
-                                },
-                                {
-                                    id: 0,
-                                    name: options[1].name,
-                                    option: option2,
-                                },
-                                {
-                                    id: 0,
-                                    name: options[2].name,
-                                    option: option3,
-                                }
-                            ]
+                            attributes
                         };
                     });
 
