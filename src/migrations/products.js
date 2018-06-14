@@ -89,6 +89,7 @@ const _import = (product) => {
         })
         .then(product => {
             const productId = product.id;
+            console.log('PRODUCT_WOO:'.yellow, productId);
 
             return WooTagActions.addTagsToProduct(productId, tags)
                 .then(() => {
