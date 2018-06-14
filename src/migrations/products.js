@@ -79,6 +79,8 @@ const _import = (product) => {
 
     return WooActions.checkExistBySlug(handle)
         .then(exist => {
+            console.log('PRODUCT_EXIST:'.yellow, exist);
+
             if (exist) {
                 return WooActions.getProductBySlug(handle);
             }
