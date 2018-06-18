@@ -16,7 +16,7 @@ const _migration = totalPage => (page = 1) => {
         .then(products => {
             return Promise.map(products, (product) => {
                 return _import(product);
-            }, {concurrency: 4});
+            }, {concurrency: 3});
         })
         .then(() => {
             if (page < pages) {
