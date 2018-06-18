@@ -17,6 +17,20 @@ const _addImageToVariant = (args) => {
     });
 };
 
+const _updateVaraints = (productId, variants) => {
+    return ShopifyImportServices.product.update(productId, {
+        variants
+    }).then(product => {
+        console.log('update product', productId);
+
+        return product;
+    }).catch(error => {
+        console.log('update error');
+
+        throw error;
+    });
+};
+
 exports.createProduct = (product) => {
     const variants = Array.isArray(product.variants) ? product.variants : [];
     const images = Array.isArray(product.images) ? product.images : [];
@@ -79,27 +93,20 @@ exports.createProduct = (product) => {
             return Promise.resolve(product);
         })
         .then(product => {
-            const {id, images, variants, image} = product;
+            const {id, images, image} = product;
 
             console.log('CREATED_PRODUCT'.yellow, id);
 
-            const variantsUpdateImage = variants.map((variant, index) => {
+            const variantsWithImages = variantsValidated.map((variant, index) => {
                 const indexImage = imageIndexing[index];
 
                 const image = images[indexImage] || image;
 
-                return {
-                    id: variant.id,
+                return Object.assign({}, variant, {
                     image_id: image.id,
-                };
+                });
             });
 
-            return Promise
-                .map(variantsUpdateImage, data => {
-                    return _addImageToVariant(data);
-                }, {concurrency: 1})
-                .then(() => {
-                    return Promise.resolve(product);
-                });
+            return _updateVaraints(id, variantsWithImages);
         });
 };
