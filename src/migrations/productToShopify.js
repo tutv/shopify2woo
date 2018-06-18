@@ -4,7 +4,7 @@ const MemServices = require('../services/MemServices');
 const Promise = require('bluebird');
 const ms = require('ms');
 
-const PER_PAGE = 10;
+const PER_PAGE = 24;
 const fileMem = __dirname + '/../../shopify.json';
 
 const _migration = totalPage => (page = 1) => {
@@ -16,7 +16,7 @@ const _migration = totalPage => (page = 1) => {
         .then(products => {
             return Promise.map(products, (product) => {
                 return _import(product);
-            }, {concurrency: 1});
+            }, {concurrency: 4});
         })
         .then(() => {
             if (page < pages) {

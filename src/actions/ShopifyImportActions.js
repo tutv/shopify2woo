@@ -17,15 +17,15 @@ const _addImageToVariant = (args) => {
     });
 };
 
-const _updateVaraints = (productId, variants) => {
+const _updateVariants = (productId, variants) => {
     return ShopifyImportServices.product.update(productId, {
         variants
     }).then(product => {
-        console.log('update product', productId);
+        console.log('UPDATE_VARIANTS'.yellow, productId);
 
         return product;
     }).catch(error => {
-        console.log('update error');
+        console.log('UPDATE_VARIANTS_ERROR'.red, productId);
 
         throw error;
     });
@@ -107,6 +107,6 @@ exports.createProduct = (product) => {
                 });
             });
 
-            return _updateVaraints(id, variantsWithImages);
+            return _updateVariants(id, variantsWithImages);
         });
 };
