@@ -1,8 +1,5 @@
 const ShopifyActions = require('../actions/ShopifyActions');
-const WooActions = require('../actions/WooActions');
-const WooTagActions = require('../actions/WooTagActions');
-const WooImageActions = require('../actions/WooImageActions');
-const WooVariationActions = require('../actions/WooVariationActions');
+const ShopifyImportActions = require('../actions/ShopifyImportActions');
 const MemServices = require('../services/MemServices');
 const Promise = require('bluebird');
 const ms = require('ms');
@@ -19,7 +16,7 @@ const _migration = totalPage => (page = 1) => {
         .then(products => {
             return Promise.map(products, (product) => {
                 return _import(product);
-            }, {concurrency: 3});
+            }, {concurrency: 1});
         })
         .then(() => {
             if (page < pages) {
@@ -47,10 +44,11 @@ const _import = (product) => {
     const {title, handle, body_html, id, options, variants, tags, images} = Object.assign({}, defaultProduct, product);
 
     console.log('START_IMPORT_PRODUCT:'.green, id);
+    console.log('TITLE:'.yellow, `${title}`);
 
     const startTime = Date.now();
 
-    return Promise.resolve()
+    return ShopifyImportActions.createProduct(product)
         .then(result => {
             const stopTime = Date.now();
             const totalTime = stopTime - startTime;

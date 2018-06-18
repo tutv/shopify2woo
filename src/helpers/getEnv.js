@@ -46,6 +46,24 @@ const data = {
             password: process.env.SHOPIFY_PASSWORD_KEY || '',
         }
     },
+    shopifyDestination: {
+        $filter: 'env',
+        $default: {
+            shopName: process.env.SHOPIFY_DES_SHOP_NAME || '',
+            apiKey: process.env.SHOPIFY_DES_API_KEY || '',
+            password: process.env.SHOPIFY_DES_PASSWORD_KEY || '',
+        },
+        development: {
+            shopName: process.env.SHOPIFY_DES_SHOP_NAME || '',
+            apiKey: process.env.SHOPIFY_DES_API_KEY || '',
+            password: process.env.SHOPIFY_DES_PASSWORD_KEY || '',
+        },
+        production: {
+            shopName: process.env.SHOPIFY_DES_SHOP_NAME || '',
+            apiKey: process.env.SHOPIFY_DES_API_KEY || '',
+            password: process.env.SHOPIFY_DES_PASSWORD_KEY || '',
+        }
+    },
     wordpress: {
         $filter: 'env',
         $default: {
