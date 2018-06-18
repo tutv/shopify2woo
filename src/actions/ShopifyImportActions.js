@@ -1,4 +1,21 @@
 const ShopifyImportServices = require('../services/ShopifyImportServices');
+const Promise = require('bluebird');
+
+const _addImageToVariant = (args) => {
+    const {id, image_id} = args;
+
+    return ShopifyImportServices.productVariant.update(id, {
+        image_id
+    }).then(variant => {
+        console.log(variant.id);
+
+        return variant;
+    }).catch(error => {
+        console.log(error);
+
+        throw error;
+    });
+};
 
 exports.createProduct = (product) => {
     const variants = Array.isArray(product.variants) ? product.variants : [];
@@ -26,11 +43,28 @@ exports.createProduct = (product) => {
         values: option.values || [],
     }));
 
+    const imageIndexing = variants.map(variant => {
+        const image_id = variant.image_id || '';
+
+        if (!image_id) {
+            return 0;
+        }
+
+        const image = images.find(image => image.id === image_id);
+        if (!image || !Number.isInteger(image.position)) {
+            return 0;
+        }
+
+        return parseInt(image.position, 10) - 1;
+    });
+
+
     const data = {
         title: product.title,
         body_html: product.body_html || "",
         vendor: product.vendor || "",
         product_type: product.product_type || "",
+        tags: product.tags || "",
         variants: variantsValidated,
         options: optionsValidated,
         images: imagesValidated
@@ -38,8 +72,32 @@ exports.createProduct = (product) => {
 
     return ShopifyImportServices.product.create(data)
         .then(product => {
-            console.log(product);
+            if (typeof product !== "object" || !product.id) {
+                throw product;
+            }
 
             return Promise.resolve(product);
+        })
+        .then(product => {
+            const {id, images, variants, image} = product;
+
+            const variantsUpdateImage = variants.map((variant, index) => {
+                const indexImage = imageIndexing[index];
+
+                const image = images[indexImage] || image;
+
+                return {
+                    id: variant.id,
+                    image_id: image.id,
+                };
+            });
+
+            return Promise
+                .map(variantsUpdateImage, data => {
+                    return _addImageToVariant(data);
+                }, {concurrency: 1})
+                .then(() => {
+                    return Promise.resolve(product);
+                });
         });
 };

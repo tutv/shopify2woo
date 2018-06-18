@@ -41,7 +41,7 @@ const _import = (product) => {
         tags: '',
     };
 
-    const {title, handle, body_html, id, options, variants, tags, images} = Object.assign({}, defaultProduct, product);
+    const {title, id,} = Object.assign({}, defaultProduct, product);
 
     console.log('START_IMPORT_PRODUCT:'.green, id);
     console.log('TITLE:'.yellow, `${title}`);
@@ -59,7 +59,7 @@ const _import = (product) => {
         })
         .catch(error => {
             console.error('IMPORT_PRODUCT_ERROR:'.red, id);
-            console.error('ERROR'.red, error);
+            // console.error('ERROR'.red, error);
 
             console.error('----------------------------------\n'.red);
         });
