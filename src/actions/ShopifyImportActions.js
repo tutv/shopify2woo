@@ -81,6 +81,8 @@ exports.createProduct = (product) => {
         .then(product => {
             const {id, images, variants, image} = product;
 
+            console.log('CREATED_PRODUCT'.yellow, id);
+
             const variantsUpdateImage = variants.map((variant, index) => {
                 const indexImage = imageIndexing[index];
 

@@ -52,16 +52,19 @@ const data = {
             shopName: process.env.SHOPIFY_DES_SHOP_NAME || '',
             apiKey: process.env.SHOPIFY_DES_API_KEY || '',
             password: process.env.SHOPIFY_DES_PASSWORD_KEY || '',
+            autoLimit: true
         },
         development: {
             shopName: process.env.SHOPIFY_DES_SHOP_NAME || '',
             apiKey: process.env.SHOPIFY_DES_API_KEY || '',
             password: process.env.SHOPIFY_DES_PASSWORD_KEY || '',
+            autoLimit: true
         },
         production: {
             shopName: process.env.SHOPIFY_DES_SHOP_NAME || '',
             apiKey: process.env.SHOPIFY_DES_API_KEY || '',
             password: process.env.SHOPIFY_DES_PASSWORD_KEY || '',
+            autoLimit: true
         }
     },
     wordpress: {
